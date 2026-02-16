@@ -1,38 +1,150 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cine Aleatório</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplicativo - Análise Vasco 2026</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Cine Aleatório</h1>
-        <p>Um toque e você descobre o próximo filme.</p>
-    </header>
+  <header>
+    <img src="https://img.sofascore.com/api/v1/team/1974/image" alt="Escudo do Vasco" class="crest">
+    <div>
+      <h1>Aplicativo - Análise Vasco (Temporada 2026)</h1>
+      <p>Controle de partidas, elenco, sócio torcedor e estatísticas avançadas.</p>
+    </div>
+  </header>
 
-    <main>
-        <button id="random-button" type="button">🎲 Me surpreenda</button>
+  <main>
+    <section class="panel">
+      <h2>Resumo Geral</h2>
+      <div id="team-stats" class="grid stats-grid"></div>
+      <h3>Stats Mandante / Casa</h3>
+      <div id="home-stats" class="grid stats-grid"></div>
+    </section>
 
-        <section id="suggestion-card" class="hidden">
-            <div class="card-header">
-                <span id="movie-genre" class="tag">Gênero</span>
-                <span id="movie-year" class="tag">Ano</span>
-            </div>
-            <h2 id="movie-title">Título do filme</h2>
-            <p id="movie-runtime" class="meta">Duração</p>
-            <p id="movie-description" class="description">Sinopse</p>
-        </section>
+    <section class="panel">
+      <h2>Cadastro de Partidas</h2>
+      <form id="match-form" class="form-grid">
+        <input type="hidden" id="match-id">
+        <label>Data <input type="date" id="date" required></label>
+        <label>Horário <input type="time" id="time" required></label>
+        <label>Rodada <input type="text" id="round" placeholder="Ex: 12ª" required></label>
+        <label>Fase
+          <select id="phase" required>
+            <option>Fase de grupos</option>
+            <option>Oitavas</option>
+            <option>Quartas</option>
+            <option>Semi</option>
+            <option>Final</option>
+            <option>Pontos corridos</option>
+          </select>
+        </label>
+        <label>Campeonato
+          <select id="competition" required>
+            <option>Campeonato Carioca</option>
+            <option>Copa Sulamericana</option>
+            <option>Copa do Brasil</option>
+            <option>Brasileirão</option>
+          </select>
+        </label>
+        <label>Adversário <input type="text" id="opponent" required></label>
+        <label>Estádio <input type="text" id="stadium"></label>
+        <label>Árbitro <input type="text" id="referee"></label>
+        <label>Uniforme <input type="text" id="uniform"></label>
+        <label>Mandante?
+          <select id="isHome"><option value="true">Sim</option><option value="false">Não</option></select>
+        </label>
+        <label>Venda de mando adversário?
+          <select id="homeBySale"><option value="false">Não</option><option value="true">Sim</option></select>
+        </label>
+        <label>Gols Vasco <input type="number" id="goalsFor" min="0" required></label>
+        <label>Gols adversário <input type="number" id="goalsAgainst" min="0" required></label>
+        <label>Teve prorrogação?
+          <select id="extraTime"><option value="false">Não</option><option value="true">Sim</option></select>
+        </label>
+        <label>Teve pênaltis?
+          <select id="penalties"><option value="false">Não</option><option value="true">Sim</option></select>
+        </label>
+        <label>Público presente <input type="number" id="attendancePresent" min="0"></label>
+        <label>Público pagante <input type="number" id="attendancePaid" min="0"></label>
+        <label>Renda (R$) <input type="number" id="revenue" min="0" step="0.01"></label>
+        <label>Inteira (R$) <input type="number" id="ticketFull" min="0" step="0.01"></label>
+        <label>Meia (R$) <input type="number" id="ticketHalf" min="0" step="0.01"></label>
 
-        <p id="empty-state" class="empty-state">Clique no botão para receber uma indicação aleatória.</p>
-    </main>
+        <label class="full">Escalação (um por linha: Nome | Posição)
+          <textarea id="lineup" rows="5" placeholder="Léo Jardim | Goleiro"></textarea>
+        </label>
+        <label class="full">Substituições (um por linha: Minuto | Saiu | Entrou)
+          <textarea id="substitutions" rows="4" placeholder="67 | Brenner | David"></textarea>
+        </label>
+        <label class="full">Gols (um por linha: Minuto | Autor | Tipo | Assistente(opcional) | Tipo assist(opcional) | GolContra(sim/não) | PenaltiPerdido(sim/não))
+          <textarea id="goals" rows="6" placeholder="45+2 | Coutinho | Falta | JP | Normal | não | não"></textarea>
+        </label>
+        <label class="full">Cartões (um por linha: Minuto | Jogador | Tipo(amarelo/vermelho/segundo amarelo))
+          <textarea id="cards" rows="4" placeholder="73 | Hugo Moura | amarelo"></textarea>
+        </label>
+        <label class="full">Pênaltis defendidos por goleiro (um por linha: Minuto | Jogador)
+          <textarea id="penaltySaves" rows="3" placeholder="52 | Léo Jardim"></textarea>
+        </label>
 
-    <footer>
-        <p>Feito para você se divertir escolhendo o próximo filme.</p>
-    </footer>
+        <div class="actions full">
+          <button type="submit">Salvar partida</button>
+          <button type="button" id="cancel-edit" class="secondary">Cancelar edição</button>
+        </div>
+      </form>
+    </section>
 
-    <script src="script.js"></script>
+    <section class="panel">
+      <h2>Partidas Registradas</h2>
+      <div id="matches-list" class="list"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Elenco e Jogadores</h2>
+      <p>Importar TXT/CSV (uma linha: Nome, Posição, Camisa, FotoURL opcional)</p>
+      <textarea id="roster-import" rows="6"></textarea>
+      <button id="import-roster" type="button">Importar elenco</button>
+      <div id="roster-groups" class="roster-groups"></div>
+      <div id="player-detail" class="player-detail">Clique em um jogador para ver detalhes.</div>
+    </section>
+
+    <section class="panel">
+      <h2>Preços Sócio Torcedor</h2>
+      <div id="socio-prices" class="grid"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Rankings</h2>
+      <div class="rank-grid">
+        <div>
+          <h3>Artilharia</h3>
+          <ol id="top-goals"></ol>
+        </div>
+        <div>
+          <h3>Assistências</h3>
+          <ol id="top-assists"></ol>
+        </div>
+        <div>
+          <h3>Participações em gol</h3>
+          <ol id="top-contrib"></ol>
+        </div>
+        <div>
+          <h3>Cartões (total)</h3>
+          <ol id="top-cards"></ol>
+        </div>
+        <div>
+          <h3>Top Parceiros</h3>
+          <ol id="top-partners"></ol>
+        </div>
+        <div>
+          <h3>Ranking de Pontos</h3>
+          <ol id="top-points"></ol>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
